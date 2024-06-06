@@ -3,8 +3,8 @@ import json
 from openai import OpenAI
 from fastapi import FastAPI
 from typing import Dict
-from pipeline.rag import LongFormQA
-from load_corpus import load_corpus
+from pipeline.rag import LongFormQA, fit_pipeline
+from load_corpus import load_corpus, load_examples
 from chunk_docs import chunk_and_save_docs
 from pipeline import setup_dspy
 from utils.citations import extract_cited_ids_from_paragraph, filter_answer_and_get_source_imgs
@@ -33,7 +33,8 @@ retriever = setup_dspy.setup_retriever(corpus, collection_name)
 corpus_ids = [i['element_id'] for i in corpus]
 
 rag_func = LongFormQA(passages_per_hop=NUM_PASSAGES)
-
+# Optional, fit the pipeline
+# fit_pipeline(rag_func, load_examples("data/examples.csv"))
 
 @app.get("/answer")
 async def get_answer_with_citations(message_json: str) -> Dict[str, str]:

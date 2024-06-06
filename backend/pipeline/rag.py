@@ -10,9 +10,10 @@ class GenerateSearchQuery(dspy.Signature):
 
 class GenerateCitedParagraph(dspy.Signature):
     """Generate a paragraph with citations."""
-    content = dspy.InputField(desc="may contain relevant facts", format=list)
+    combine_content = lambda l: '\n'.join(l)
+    content = dspy.InputField(desc="may contain relevant facts", format=combine_content)
     question = dspy.InputField()
-    paragraph = dspy.OutputField(desc="includes citations in [] form or say 'The answer is not in the given context'")
+    paragraph = dspy.OutputField(desc="includes citations in [] form at the end of the answer or say 'The answer is not in the given context'")
 
 class LongFormQA(dspy.Module):
     def __init__(self, passages_per_hop=6, max_hops=1):
