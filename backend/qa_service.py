@@ -19,9 +19,12 @@ openai_client = OpenAI(api_key=os.getenv("openaikey"))
 NUM_PASSAGES = 6
 NUM_RETRIEVED_PASSAGES_TO_SHOW = 3
 MAX_OUTPUT_TOKENS = 300
+
+# Name of collection & corpus
 collection_name = "gleen"
 corpus_jsonl_path = "data/chunked_corpus.jsonl"
 
+# Load Corpus
 if not os.path.exists(corpus_jsonl_path):
     chunk_and_save_docs(docs_dir="docs/", save_images_dir="chatapp/assets/images", jsonl_path=corpus_jsonl_path)
 corpus = load_corpus(corpus_jsonl_path)
@@ -30,7 +33,6 @@ retriever = setup_dspy.setup_retriever(corpus, collection_name)
 corpus_ids = [i['element_id'] for i in corpus]
 
 rag_func = LongFormQA(passages_per_hop=NUM_PASSAGES)
-# Add optional fitting script
 
 
 @app.get("/answer")
