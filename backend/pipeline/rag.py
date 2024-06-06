@@ -1,5 +1,6 @@
 import dspy
 from dsp.utils import deduplicate
+from dspy.teleprompt import BootstrapFewShot
 
 class GenerateSearchQuery(dspy.Signature):
     """Write a simple search query that will help answer a complex question."""
@@ -32,3 +33,12 @@ class LongFormQA(dspy.Module):
         return pred
     
 
+def validate_context_and_answer(example, pred, trace=None):
+    answer_EM = dspy.evaluate.answer_exact_match(example, pred)
+    answer_PM = dspy.evaluate.answer_passage_match(example, pred)
+    return answer_EM and answer_PM
+
+def fit_pipeline(pipeline, train_set):
+    teleprompter = BootstrapFewShot(metric=validate_context_and_answer)
+
+    return teleprompter.compile(pipeline, trainset=train_set)
