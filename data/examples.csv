@@ -1,0 +1,42 @@
+question,answer,doc_name
+Tell me the names of all the cities where Microsoft is located?,"Here are the names of the cities with a Microsoft office based on the provided list:
+Boston
+Dallas
+Los Angeles
+Houston
+Miami
+Seattle
+Denver
+Phoenix
+San Diego
+Detroit
+Philadelphia
+Minneapolis
+Charlotte
+Orlando
+Portland
+Pittsburgh
+Cincinnati
+St. Louis
+Tampa
+Baltimore
+Indianapolis
+Kansas City
+Nashville
+Austin",Office address.pdf
+What's the accuracy difference between Dexterity and mobility?,"Based on the provided data table, the accuracy for the ""Dexterity"" category is 98.3%, with n=4 participants. For the ""Mobility"" category, the accuracy is 95.4%, with n=3 participants.
+Therefore, the difference in accuracy between the ""Dexterity"" and ""Mobility"" categories is:
+98.3% (Dexterity) - 95.4% (Mobility) = 2.9%
+The ""Dexterity"" category has an accuracy that is 2.9 percentage points higher than the ""Mobility"" category.",table pdf.pdf
+How do I include a surcharge?,"
+When applying a batch payment to a customer's invoices, you can include a
+Surcharge fee with one click.
+Navigate to the Customers tab and find the customer that you want to process payment for
+On the Customer Profile page, scroll to the Invoices tab. Here you can easily view the status of all of your customer's invoices.
+If you would like to process multiple invoices for the customer, click the Batch Process button.
+The Process Invoices window will appear. Click the checkbox next to the invoice(s) that you wish to process payment for. If
+your customer has payment methods stored in their profile, a dropdown menu of options will be shown. If a customer does
+not have a payment method stored, an entry form for Credit Card Number will be displayed.
+ou can opt to apply a Surcharge to any invoices being paid by an eligible credit card. If your business has Surcharging Phone support: 800-369-1160 Go to chargezoom.com Schedule Live Support
+enabled for all invoices, this box will be checked by default and include the determined amount. 
+",pdf with image.pdf
