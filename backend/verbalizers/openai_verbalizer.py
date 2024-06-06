@@ -3,8 +3,6 @@ import os
 from openai import OpenAI
 from utils.utils import encode_image
 
-
-
 # Function to verbalize the image
 
 class OpenAIVerbalizer:
@@ -41,4 +39,4 @@ class OpenAIVerbalizer:
         return response.choices[0].message.content
     
     def __call__(self, image_path):
-        self.verbalize_image(image_path)
+        return  self.verbalize_image(image_path)

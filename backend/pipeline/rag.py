@@ -1,5 +1,4 @@
 import dspy
-from dspy.teleprompt import BootstrapFewShot
 from dsp.utils import deduplicate
 
 class GenerateSearchQuery(dspy.Signature):
@@ -10,9 +9,9 @@ class GenerateSearchQuery(dspy.Signature):
 
 class GenerateCitedParagraph(dspy.Signature):
     """Generate a paragraph with citations."""
-    context = dspy.InputField(desc="may contain relevant facts")
+    content = dspy.InputField(desc="may contain relevant facts", format=list)
     question = dspy.InputField()
-    paragraph = dspy.OutputField(desc="includes citations or say 'The answer is not in the given context'")
+    paragraph = dspy.OutputField(desc="includes citations in [] form or say 'The answer is not in the given context'")
 
 class LongFormQA(dspy.Module):
     def __init__(self, passages_per_hop=6, max_hops=1):
@@ -28,21 +27,8 @@ class LongFormQA(dspy.Module):
             query = self.generate_query[hop](context=context, question=question).query
             passages = self.retrieve(query).passages
             context = deduplicate(context + passages)
-        pred = self.generate_cited_paragraph(context=context, question=question)
+        pred = self.generate_cited_paragraph(content=context, question=question)
         pred = dspy.Prediction(context=context, paragraph=pred.paragraph)
         return pred
     
-    
-def validate_context_and_answer(example, pred, trace=None):
-    answer_EM = dspy.evaluate.answer_exact_match(example, pred)
-    answer_PM = dspy.evaluate.answer_passage_match(example, pred)
-    return answer_EM and answer_PM
-
-def fit_rag(rag_pipeline, trainset):
-    # Set up a basic teleprompter, which will compile our RAG program.
-    teleprompter = BootstrapFewShot(metric=validate_context_and_answer)
-
-    # Compile!
-    compiled_rag = teleprompter.compile(rag_pipeline, trainset=trainset)
-    return compiled_rag
 

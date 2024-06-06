@@ -111,6 +111,10 @@ class State(rx.State):
             resp_json = response.json()
             answer_text = resp_json['result']
             images = resp_json['source_images'].split(";")
+            # Exists in local assets directory
+            if "assets/" in images[0]:
+                images = [source_image[source_image.index('assets') + len('assets'):] for source_image in images]
+            
         else:
             print("Error:", response.text)
         
@@ -120,7 +124,7 @@ class State(rx.State):
         if answer_text is not None:
             for i in range(len(answer_text)):
                 # Pause to show the streaming effect.
-                await asyncio.sleep(0.02)
+                await asyncio.sleep(0.015)
                 self.chats[self.current_chat][-1].answer += answer_text[i]
                 
                 yield

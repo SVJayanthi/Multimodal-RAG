@@ -7,37 +7,24 @@ from PIL import Image
 import requests
 
 
-
-# class ImageState(rx.State):
-#     url = Path("../images/pdf with image/cropped_images/page1/fig_0.jpg")
-#     # return rx.image(src=)"
-#     # image = requests.get(url, stream=True).raw
-#     image = Image.open(url)
-
-
-# def image_pil():
-#     return rx.image(src=ImageState.url, width="100px", height="auto")
-
 message_style = dict(display="inline-block", padding="1em", border_radius="8px", max_width=["30em", "30em", "50em", "50em", "50em", "50em"])
 
 
 def display_sources(source) -> rx.Component:
     source_idx = source[0]
     source_img_loc = source[1]
-    return rx.hstack(
-        rx.vstack(
-            rx.box(
-                rx.markdown(
-                    f"Source {source_idx}",
+    return rx.box(
+            rx.vstack(
+                rx.box(
+                    rx.markdown(
+                        f"Source {source_idx}",
+                    ),
+                    text_align="center",
+                    padding_bottom="0em",
+                    border_radius="0px"
                 ),
-                text_align="center",
-                padding_bottom="0em",
-                border_radius="0px"
+                rx.image(src=source_img_loc, width="100px", height="auto", border_radius="0px",),
             ),
-            rx.image(src=source_img_loc, width="100px", height="auto", border_radius="0px",),
-        ),
-        
-        overflow="hidden",
     )
 
 
@@ -71,7 +58,14 @@ def message(qa: QA) -> rx.Component:
             text_align="left",
             padding_top="1em",
         ),
-        rx.box(rx.foreach(qa.sources, display_sources), width="100%"),
+        rx.hstack(rx.foreach(qa.sources, display_sources), 
+                width="100%", 
+                background_color=rx.color("accent", 4),
+                color=rx.color("accent", 12),
+                padding_left="1em",
+                padding_bottom="1em",
+                overflow="hidden",
+                ),
         width="100%",
     )
 

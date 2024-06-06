@@ -1,9 +1,6 @@
-import nltk
 import regex as re
 
-nltk.download('punkt')
-from nltk.tokenize import sent_tokenize
-
+REGEX_CITATION_PATTERN = r'\[(.*?)\]'
 
 def extract_text_by_citation(paragraph):
     citation_regex = re.compile(r'(.*?)(\[\d+\]\.)', re.DOTALL)
@@ -16,46 +13,18 @@ def extract_text_by_citation(paragraph):
     return citation_dict
 
 
-def correct_citation_format(paragraph):
-    modified_sentences = []
-    sentences = sent_tokenize(paragraph)
-    for sentence in sentences:
-        modified_sentences.append(sentence)
-    citation_regex = re.compile(r'\[\d+\]\.')
-    i = 0
-    if len(modified_sentences) == 1:
-      has_citation = bool(citation_regex.search(modified_sentences[i]))
-    while i < len(modified_sentences):
-      if len(modified_sentences[i:i+2]) == 2:
-        sentence_group = " ".join(modified_sentences[i:i+2])
-        has_citation = bool(citation_regex.search(sentence_group))
-        if not has_citation:
-            return False
-        i += 2 if has_citation and i+1 < len(modified_sentences) and citation_regex.search(modified_sentences[i+1]) else 1
-      else:
-        return True
-    return True
-
 def has_citations(paragraph):
     return bool(re.search(r'\[\d+\]\.', paragraph))
 
-def citations_check(paragraph):
-    return has_citations(paragraph) and correct_citation_format(paragraph)
+def extract_cited_ids_from_paragraph(paragraph, corpus_ids):
+    cited_ids = [m.group(1) for m in re.finditer(REGEX_CITATION_PATTERN, paragraph)]
+    return [corpus_ids.index(item) for item in cited_ids if item in corpus_ids]
 
-def extract_cited_titles_from_paragraph(paragraph, context):
-    cited_indices = [int(m.group(1)) for m in re.finditer(r'\[(\d+)\]\.', paragraph)]
-    cited_indices = [index - 1 for index in cited_indices if index <= len(context)]
-    cited_titles = [context[index].split(' | ')[0] for index in cited_indices]
-    return cited_titles
+def filter_answer_and_get_source_imgs(corpus, cited_ids, answer):
+    counter = iter(range(1, 100))
 
-def get_source_idxs(contexts, isd_ids, pattern = r'\[(.*?)\]'):
-    source_ids = []
+    filtered_answer = re.sub(REGEX_CITATION_PATTERN, lambda m: '[' + str(next(counter)) + ']', answer)
     
-    for c in contexts:
-        matches = re.findall(pattern, c)
-        source_ids.extend([val for val in matches if val in isd_ids])
-
-    # Get raw index of each source id hash
-    source_ids_idx = [i for i, x in enumerate(source_ids) if x in isd_ids]
+    source_img_paths = [corpus[idx]['metadata']['image_location'] for idx in cited_ids]
     
-    return source_ids_idx
+    return filtered_answer, source_img_paths
