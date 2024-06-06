@@ -5,7 +5,7 @@ Composable & modular pipeline for Multimodal Retrieval Augmented Generation with
 Sravan Jayanthi
 
 ## Demo
-![vid](video/ChatappNarration.mp4)
+[![Video Demo](https://img.youtube.com/vi/hofZwGcOcGM/0.jpg)](https://www.youtube.com/watch?v=hofZwGcOcGM)
 
 <!-- <video width="320" height="240" controls>
   <source src="video/ChatappNarration.mp4" type="video/mp4">
