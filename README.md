@@ -5,10 +5,11 @@ Composable & modular pipeline for Multimodal Retrieval Augmented Generation with
 Sravan Jayanthi
 
 ## Demo
-<!-- ![](video/ChatappNarration.mp4) -->
-<video width="320" height="240" controls>
+![vid](video/ChatappNarration.mp4)
+
+<!-- <video width="320" height="240" controls>
   <source src="video/ChatappNarration.mp4" type="video/mp4">
-</video>
+</video> -->
 
 
 Video demo of Multimodal RAG
