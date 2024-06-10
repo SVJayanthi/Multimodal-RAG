@@ -7,7 +7,7 @@ Sravan Jayanthi
 ## Demo
 [![Video Demo](https://img.youtube.com/vi/hofZwGcOcGM/0.jpg)](https://www.youtube.com/watch?v=hofZwGcOcGM)
 
-[Architecture Demo](https://www.loom.com/share/d86866bdfef24a91932369d438edf4de?sid=97ff4411-e5dc-4872-b36d-384823a8b69c)]
+[Architecture Demo](https://www.loom.com/share/d86866bdfef24a91932369d438edf4de?sid=97ff4411-e5dc-4872-b36d-384823a8b69c)
 <!-- <video width="320" height="240" controls>
   <source src="video/ChatappNarration.mp4" type="video/mp4">
 </video> -->
