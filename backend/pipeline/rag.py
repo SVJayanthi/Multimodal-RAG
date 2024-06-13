@@ -1,45 +1,33 @@
-import dspy
-from dsp.utils import deduplicate
-from dspy.teleprompt import BootstrapFewShot
+DEFAULT_PROMPT = """Given the below extracts & images, provide an answer to the given question.
+Include citations in [] form at the end of the answer or say 'The answer is not in the given context'.
+Question: {question}
+Extracts: {context}
+Answer: """
 
-class GenerateSearchQuery(dspy.Signature):
-    """Write a simple search query that will help answer a complex question."""
-    context = dspy.InputField(desc="may contain relevant facts")
-    question = dspy.InputField()
-    query = dspy.OutputField()
-
-class GenerateCitedParagraph(dspy.Signature):
-    """Generate a paragraph with citations."""
-    combine_content = lambda l: '\n'.join(l)
-    content = dspy.InputField(desc="may contain relevant facts", format=combine_content)
-    question = dspy.InputField()
-    paragraph = dspy.OutputField(desc="includes citations in [] form at the end of the answer or say 'The answer is not in the given context'")
-
-class LongFormQA(dspy.Module):
-    def __init__(self, passages_per_hop=6, max_hops=1):
+class CitationQA:
+    def __init__(self, retriever, collection_name, lmm, prompt=None, passages_per_hop=6):
         super().__init__()
-        self.generate_query = [dspy.ChainOfThought(GenerateSearchQuery) for _ in range(max_hops)]
-        self.retrieve = dspy.Retrieve(k=passages_per_hop)
-        self.generate_cited_paragraph = dspy.ChainOfThought(GenerateCitedParagraph)
-        self.max_hops = max_hops
+        self.retriever = retriever
+        self.collection_name = collection_name
+        self.lmm = lmm
+        self.prompt = DEFAULT_PROMPT
+        if prompt:
+            self.prompt = prompt 
+        self.passages_per_hop = passages_per_hop
+        self.max_hops = 1
     
     def forward(self, question):
-        context = []
-        for hop in range(self.max_hops):
-            query = self.generate_query[hop](context=context, question=question).query
-            passages = self.retrieve(query).passages
-            context = deduplicate(context + passages)
-        pred = self.generate_cited_paragraph(content=context, question=question)
-        pred = dspy.Prediction(context=context, paragraph=pred.paragraph)
-        return pred
+        search_result = self.retriever.query(
+            collection_name=self.collection_name,
+            query_text=question,
+            limit=self.passages_per_hop
+        )
+        
+        documents = [r.document for r in search_result]
+        context = "\n".join(documents)
+        prompt_filled = self.prompt.format(question=question, context=context)
+        
+        return self.lmm(prompt_filled, None), documents
     
-
-def validate_context_and_answer(example, pred, trace=None):
-    answer_EM = dspy.evaluate.answer_exact_match(example, pred)
-    answer_PM = dspy.evaluate.answer_passage_match(example, pred)
-    return answer_EM and answer_PM
-
-def fit_pipeline(pipeline, train_set):
-    teleprompter = BootstrapFewShot(metric=validate_context_and_answer)
-
-    return teleprompter.compile(pipeline, trainset=train_set)
+    def __call__(self, prompt):
+        return  self.forward(prompt)
